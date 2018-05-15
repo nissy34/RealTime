@@ -12,23 +12,23 @@ public class Controller extends Thread
 {
 
     private boolean stop = true;
+    private boolean history = false;
     InState inState;
     OutState outState;
-    final int INTERVALATGREEN=10000;
-    final int INTERVALTOGREEN=2000;
+    final int INTERVALATGREEN = 10000;
+    final int INTERVALTOGREEN = 2000;
 
-    final int[] GROUP1=new int[]{1,2,4,5,6,7,12,13};
-    final int[] GROUP2=new int[]{2,3,4,5,8,11,14,15};
-    final int[] GROUP3=new int[]{0,6,7,9,10,12,13};
+    final int[] GROUP1 = new int[]{1, 2, 4, 5, 6, 7, 12, 13};
+    final int[] GROUP2 = new int[]{2, 3, 4, 5, 8, 11, 14, 15};
+    final int[] GROUP3 = new int[]{0, 6, 7, 9, 10, 12, 13};
 
-    Event64  evPressedShabat,evPressedChol,evPressed,evTimerEnd;
-    Event64[] evToShabat, evToWeekday, group1ToRed,group1AtRed,group1ToGreen,group2ToRed,group2AtRed,group2ToGreen,group3ToRed,group3AtRed,group3ToGreen;
+    Event64 evPressedShabat, evPressedChol, evPressed, evTimerEnd, evStop;
+    Event64[] evToShabat, evToWeekday, group1ToRed, group1AtRed, group1ToGreen, group2ToRed, group2AtRed, group2ToGreen, group3ToRed, group3AtRed, group3ToGreen;
 
     enum OutState
     {
-        ON_SHABAT, ON_WEEKDAY
+        ON_SHABAT, ON_WEEKDAY, ON_FREEZE
     }
-
 
 
     enum InState
@@ -40,9 +40,7 @@ public class Controller extends Thread
     }
 
 
-
-
-    public Controller(Event64[] evToShabat, Event64[] evToWeekday, Event64 evPressedChol,Event64 evPressedShabat, Event64 evPressed, Event64[] group1ToRed, Event64[] group1AtRed, Event64[] group1ToGreen, Event64[] group2ToRed, Event64[] group2AtRed, Event64[] group2ToGreen, Event64[] group3ToRed, Event64[] group3AtRed, Event64[] group3ToGreen)
+    public Controller(Event64 evStop, Event64[] evToShabat, Event64[] evToWeekday, Event64 evPressedChol, Event64 evPressedShabat, Event64 evPressed, Event64[] group1ToRed, Event64[] group1AtRed, Event64[] group1ToGreen, Event64[] group2ToRed, Event64[] group2AtRed, Event64[] group2ToGreen, Event64[] group3ToRed, Event64[] group3AtRed, Event64[] group3ToGreen)
     {
         super();
         this.evToShabat = evToShabat;
@@ -55,83 +53,116 @@ public class Controller extends Thread
         this.group1ToGreen = group1ToGreen;
         this.group2ToRed = group2ToRed;
         this.group2AtRed = group2AtRed;
+        this.evStop = evStop;
         this.group2ToGreen = group2ToGreen;
         this.group3ToRed = group3ToRed;
         this.group3AtRed = group3AtRed;
         this.group3ToGreen = group3ToGreen;
-        evTimerEnd=new Event64();
+        evTimerEnd = new Event64();
         start();
     }
 
 
-
-    public void run(){
+    public void run()
+    {
         outState = OutState.ON_WEEKDAY;
 
 
-        while(true){
+        while (true)
+        {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
             LocalDateTime now = LocalDateTime.now();
-            System.out.println(outState.toString()+" "+dtf.format(now)); //2016/11/16 12:08:43
-            switch (outState){
+            System.out.println(outState.toString() + " " + dtf.format(now)); //2016/11/16 12:08:43
+            switch (outState)
+            {
 
 
-                case ON_SHABAT:{
+                case ON_SHABAT:
+                {
                     evPressedChol.waitEvent();
-                    outState= OutState.ON_WEEKDAY;
-                    for(Event64 ev : evToWeekday)
+                    outState = OutState.ON_WEEKDAY;
+                    for (Event64 ev : evToWeekday)
                         ev.sendEvent();
                     break;
                 }
-                case ON_WEEKDAY:{
-                    inState=InState.G1_HOLDING;
+                case ON_FREEZE:
+                {
+                    history = true;
+                    evStop.waitEvent();
+                    outState = OutState.ON_WEEKDAY;
+                    break;
+                }
+                case ON_WEEKDAY:
+                {
+                    if (!history)
+                    {
+                        inState = InState.G1_HOLDING;
+
+                    } else
+                    {
+                        history = false;
+                    }
 
 
-                    while(outState==OutState.ON_WEEKDAY){
+                    while (outState == OutState.ON_WEEKDAY)
+                    {
 
-                         now = LocalDateTime.now();
-                        System.out.println(inState.toString()+" "+dtf.format(now)); //2016/11/16 12:08:43
-                        switch (inState){
+                        now = LocalDateTime.now();
+                        System.out.println(inState.toString() + " " + dtf.format(now)); //2016/11/16 12:08:43
+                        switch (inState)
+                        {
 
-                            case G1_ON_GREEN:{
+                            case G1_ON_GREEN:
+                            {
 
-                                evTimerEnd=new Event64();
+                                evTimerEnd = new Event64();
                                 new MyTimer(INTERVALATGREEN, evTimerEnd);
-                                while(true){
-                                    if(evTimerEnd.arrivedEvent())
+                                while (true)
+                                {
+                                    if (evTimerEnd.arrivedEvent())
                                     {
-
-                                        inState=InState.G1_ON_RED;
+                                        inState = InState.G1_ON_RED;
                                         setG1ToRed();
                                         break;
-                                    }
-                                    else if(evPressedShabat.arrivedEvent()){
-
+                                    } else if (evPressedShabat.arrivedEvent())
+                                    {
                                         toShabat();
                                         break;
-
-                                    }
-                                    else {
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
+                                    {
                                         yield();
                                     }
 
                                 }
                                 break;
                             }
-                            case G1_ON_RED:{
+                            case G1_ON_RED:
+                            {
 
-                                while(true){
-                                    if(evPressedShabat.arrivedEvent()){
+                                while (true)
+                                {
+                                    if (evPressedShabat.arrivedEvent())
+                                    {
                                         toShabat();
                                         break;
 
-                                    }
-                                    else if(G1InRed()){
-                                        inState=InState.G2_HOLDING;
+                                    } else if (G1InRed())
+                                    {
+                                        inState = InState.G2_HOLDING;
                                         break;
 
-                                    }
-                                    else{
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
+                                    {
                                         yield();
                                     }
                                 }
@@ -140,155 +171,184 @@ public class Controller extends Thread
 
                             }
 
-                            case G2_HOLDING:{
-                                evTimerEnd=new Event64();
+                            case G2_HOLDING:
+                            {
+                                evTimerEnd = new Event64();
                                 new MyTimer(INTERVALTOGREEN, evTimerEnd);
-                                while(true){
-                                    if(evTimerEnd.arrivedEvent())
+                                while (true)
+                                {
+                                    if (evTimerEnd.arrivedEvent())
                                     {
 
-                                        inState=InState.G2_ON_GREEN;
+                                        inState = InState.G2_ON_GREEN;
                                         setG2ToGreen();
                                         break;
-                                    }
-                                    else if(evPressedShabat.arrivedEvent()){
-
-                                        toShabat();
-                                        break;
-
-                                    }
-                                    else if(evPressed.arrivedEvent()){
-                                       int key=(int)evPressed.waitEvent();
-                                       if(FromG2(key)){
-                                           inState=InState.G2_ON_GREEN;
-                                           setG2ToGreen();
-
-                                       }
-                                       else if(FromG3(key)){
-                                           inState=InState.G3_ON_GREEN;
-                                           setG3ToGreen();
-                                        }
-                                        else
-                                       {
-                                           inState = InState.G1_ON_GREEN;
-                                           setG1ToGreen();
-                                       }
-                                        break;
-                                    }
-                                    else {
-                                        yield();
-                                    }
-
-                                }
-                                break;
-                            }
-
-                            case G2_ON_GREEN:{
-                                evTimerEnd=new Event64();
-                                new MyTimer(INTERVALATGREEN, evTimerEnd);
-                                while(true){
-                                    if(evTimerEnd.arrivedEvent())
+                                    } else if (evPressedShabat.arrivedEvent())
                                     {
 
-                                        inState=InState.G2_ON_RED;
-                                        setG2ToRed();
-                                        break;
-                                    }
-                                    else if(evPressedShabat.arrivedEvent()){
-
                                         toShabat();
                                         break;
 
-                                    }
-                                    else {
-                                        yield();
-                                    }
-
-                                }
-                                break;
-                            }
-                            case G2_ON_RED:{
-                                while(true){
-                                    if(evPressedShabat.arrivedEvent()){
-                                        toShabat();
-                                        break;
-
-                                    }
-                                    else if(G2InRed()){
-                                        inState=InState.G3_HOLDING;
-                                        break;
-
-                                    }
-                                    else{
-                                        yield();
-                                    }
-                                }
-                                break;
-
-                            }
-
-                            case G3_HOLDING:{
-                                evTimerEnd=new Event64();
-                                new MyTimer(INTERVALTOGREEN, evTimerEnd);
-                                while(true){
-                                    if(evTimerEnd.arrivedEvent())
+                                    } else if (evPressed.arrivedEvent())
                                     {
+                                        int key = (int) evPressed.waitEvent();
+                                        if (FromG2(key))
+                                        {
+                                            inState = InState.G2_ON_GREEN;
+                                            setG2ToGreen();
 
-                                        inState=InState.G3_ON_GREEN;
-                                        setG3ToGreen();
-                                        break;
-                                    }
-                                    else if(evPressedShabat.arrivedEvent()){
-
-                                        toShabat();
-                                        break;
-
-                                    }
-                                    else if(evPressed.arrivedEvent()){
-                                        int key=(int)evPressed.waitEvent();
-                                        if(FromG3(key)){
-                                            inState=InState.G3_ON_GREEN;
+                                        } else if (FromG3(key))
+                                        {
+                                            inState = InState.G3_ON_GREEN;
                                             setG3ToGreen();
-
-                                        }
-                                        else if(FromG1(key)){
-                                            inState=InState.G1_ON_GREEN;
+                                        } else
+                                        {
+                                            inState = InState.G1_ON_GREEN;
                                             setG1ToGreen();
                                         }
-                                        else
+                                        break;
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
+                                    {
+                                        yield();
+                                    }
+
+                                }
+                                break;
+                            }
+
+                            case G2_ON_GREEN:
+                            {
+                                evTimerEnd = new Event64();
+                                new MyTimer(INTERVALATGREEN, evTimerEnd);
+                                while (true)
+                                {
+                                    if (evTimerEnd.arrivedEvent())
+                                    {
+
+                                        inState = InState.G2_ON_RED;
+                                        setG2ToRed();
+                                        break;
+                                    } else if (evPressedShabat.arrivedEvent())
+                                    {
+
+                                        toShabat();
+                                        break;
+
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
+                                    {
+                                        yield();
+                                    }
+
+                                }
+                                break;
+                            }
+                            case G2_ON_RED:
+                            {
+                                while (true)
+                                {
+                                    if (evPressedShabat.arrivedEvent())
+                                    {
+                                        toShabat();
+                                        break;
+
+                                    } else if (G2InRed())
+                                    {
+                                        inState = InState.G3_HOLDING;
+                                        break;
+
+                                    } else
+                                    {
+                                        yield();
+                                    }
+                                }
+                                break;
+
+                            }
+
+                            case G3_HOLDING:
+                            {
+                                evTimerEnd = new Event64();
+                                new MyTimer(INTERVALTOGREEN, evTimerEnd);
+                                while (true)
+                                {
+                                    if (evTimerEnd.arrivedEvent())
+                                    {
+
+                                        inState = InState.G3_ON_GREEN;
+                                        setG3ToGreen();
+                                        break;
+                                    } else if (evPressedShabat.arrivedEvent())
+                                    {
+
+                                        toShabat();
+                                        break;
+
+                                    } else if (evPressed.arrivedEvent())
+                                    {
+                                        int key = (int) evPressed.waitEvent();
+                                        if (FromG3(key))
+                                        {
+                                            inState = InState.G3_ON_GREEN;
+                                            setG3ToGreen();
+
+                                        } else if (FromG1(key))
+                                        {
+                                            inState = InState.G1_ON_GREEN;
+                                            setG1ToGreen();
+                                        } else
                                         {
                                             inState = InState.G2_ON_GREEN;
                                             setG2ToGreen();
                                         }
                                         break;
-                                    }
-                                    else {
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
                                         yield();
-                                    }
 
                                 }
                                 break;
 
                             }
-                            case G3_ON_GREEN:{
-                                evTimerEnd=new Event64();
-                              new MyTimer(INTERVALATGREEN, evTimerEnd);
+                            case G3_ON_GREEN:
+                            {
+                                evTimerEnd = new Event64();
+                                new MyTimer(INTERVALATGREEN, evTimerEnd);
 
-                                while(true){
-                                    if(evTimerEnd.arrivedEvent())
+                                while (true)
+                                {
+                                    if (evTimerEnd.arrivedEvent())
                                     {
 
-                                        inState=InState.G3_ON_RED;
+                                        inState = InState.G3_ON_RED;
                                         setG3ToRed();
                                         break;
-                                    }
-                                    else if(evPressedShabat.arrivedEvent()){
+                                    } else if (evPressedShabat.arrivedEvent())
+                                    {
 
                                         toShabat();
                                         break;
 
-                                    }
-                                    else {
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
+                                    {
                                         yield();
                                     }
 
@@ -297,23 +357,31 @@ public class Controller extends Thread
 
                             }
 
-                            case G3_ON_RED:{
-                                while(true){
-                                    if(evPressedShabat.arrivedEvent()){
+                            case G3_ON_RED:
+                            {
+                                while (true)
+                                {
+                                    if (evPressedShabat.arrivedEvent())
+                                    {
 
                                         resetEvents(group3AtRed);
                                         toShabat();
                                         break;
 
-                                    }
-                                    else if(G3InRed()){
-                                        inState=InState.G1_HOLDING;
+                                    } else if (G3InRed())
+                                    {
+                                        inState = InState.G1_HOLDING;
 
 
                                         break;
 
-                                    }
-                                    else{
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
+                                    {
                                         yield();
                                     }
                                 }
@@ -321,43 +389,51 @@ public class Controller extends Thread
 
                             }
 
-                            case G1_HOLDING:{
-                                evTimerEnd=new Event64();
+                            case G1_HOLDING:
+                            {
+                                evTimerEnd = new Event64();
                                 new MyTimer(INTERVALTOGREEN, evTimerEnd);
-                                while(true){
-                                    if(evTimerEnd.arrivedEvent())
+                                while (true)
+                                {
+                                    if (evTimerEnd.arrivedEvent())
                                     {
 
-                                        inState=InState.G1_ON_GREEN;
+                                        inState = InState.G1_ON_GREEN;
                                         setG1ToGreen();
                                         break;
-                                    }
-                                    else if(evPressedShabat.arrivedEvent()){
+                                    } else if (evPressedShabat.arrivedEvent())
+                                    {
 
                                         toShabat();
                                         break;
 
-                                    }
-                                    else if(evPressed.arrivedEvent()){
+                                    } else if (evPressed.arrivedEvent())
+                                    {
 
-                                        int key=(int)evPressed.waitEvent();
-                                        if(FromG1(key)){
-                                            inState=InState.G1_ON_GREEN;
+                                        int key = (int) evPressed.waitEvent();
+                                        if (FromG1(key))
+                                        {
+                                            inState = InState.G1_ON_GREEN;
                                             setG1ToGreen();
 
-                                        }
-                                        else if(FromG2(key)){
-                                            inState=InState.G2_ON_GREEN;
+                                        } else if (FromG2(key))
+                                        {
+                                            inState = InState.G2_ON_GREEN;
                                             setG2ToGreen();
-                                        }
-                                        else
+                                        } else
                                         {
                                             inState = InState.G3_ON_GREEN;
                                             setG3ToGreen();
                                         }
+
                                         break;
-                                    }
-                                    else {
+                                    } else if (evStop.arrivedEvent())
+                                    {
+                                        evStop.resetEvent();
+                                        outState = OutState.ON_FREEZE;
+                                        break;
+                                    } else
+                                    {
                                         yield();
                                     }
 
@@ -374,14 +450,13 @@ public class Controller extends Thread
         }
 
 
-
     }
 
     private void toWeekday()
     {
         evPressedShabat.waitEvent();
-        outState= OutState.ON_WEEKDAY;
-        for(Event64 ev : evToWeekday)
+        outState = OutState.ON_WEEKDAY;
+        for (Event64 ev : evToWeekday)
             ev.sendEvent();
     }
 
@@ -435,27 +510,30 @@ public class Controller extends Thread
         return true;
     }
 
-    boolean FromG1(int key){
-        for(int x:GROUP1)
-            if(x==key)
+    boolean FromG1(int key)
+    {
+        for (int x : GROUP1)
+            if (x == key)
                 return true;
 
         return false;
 
     }
 
-    boolean FromG2(int key){
-        for(int x:GROUP2)
-            if(x==key)
+    boolean FromG2(int key)
+    {
+        for (int x : GROUP2)
+            if (x == key)
                 return true;
 
         return false;
 
     }
 
-    boolean FromG3(int key){
-        for(int x:GROUP3)
-            if(x==key)
+    boolean FromG3(int key)
+    {
+        for (int x : GROUP3)
+            if (x == key)
                 return true;
 
         return false;
@@ -533,8 +611,8 @@ public class Controller extends Thread
     private void toShabat()
     {
         evPressedShabat.waitEvent();
-        outState= OutState.ON_SHABAT;
-        for(Event64 ev : evToShabat)
+        outState = OutState.ON_SHABAT;
+        for (Event64 ev : evToShabat)
             ev.sendEvent();
     }
 

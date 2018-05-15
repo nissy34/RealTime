@@ -14,7 +14,17 @@ public class BuildTrafficLight
 		final int[] GROUP2=new int[]{2,3,4,5,8,11,14,15};
 		final int[] GROUP3=new int[]{0,6,7,9,10,12,13};
 
+		Event64 evGroup1ToGreen=new Event64(),
+				evGroup2ToGreen=new Event64(),
+				evGroup3ToGreen=new Event64(),
+                evTo_Shabat_client=new Event64(),
+                evTo_weekday_client=new Event64(),
+                evTo_freeze_client=new Event64();
+
+
 		Event64[] evToGreen,evToRed,evToShabat,evToWeekday,evAtRed;
+
+
 		final int numOfLights=4+12+1;
         evToGreen=new Event64[numOfLights-1];
         evToRed=new Event64[numOfLights-1];
@@ -33,10 +43,6 @@ public class BuildTrafficLight
 		Ramzor ramzorim[]=new Ramzor[numOfLights];
 
 
-        //Group 1
-
-        //Group 2
-        //Group 3
 
         ramzorim[0]=new Ramzor(3,40,430,110,472,110,514,110);
 		ramzorim[1]=new Ramzor(3,40,450,310,450,352,450,394);
@@ -70,13 +76,15 @@ public class BuildTrafficLight
 
 
 
+
         Event64 evP_ToShabat=new Event64();
         Event64 evP_Toweekday=new Event64();
+		Event64 evP_Freeze=new Event64();
 		Event64 evP_butt=new Event64();
 
-		MyActionListener myListener=new MyActionListener(evP_butt,evP_ToShabat,evP_Toweekday);
+		MyActionListener myListener=new MyActionListener(evP_butt,evP_ToShabat,evP_Toweekday,evP_Freeze);
 
-		JRadioButton butt[]=new JRadioButton[13]; 
+		JRadioButton butt[]=new JRadioButton[14];
 
 		for (int i=0;i<butt.length-1;i++) 
 		{
@@ -109,8 +117,19 @@ public class BuildTrafficLight
 
 
 
+		butt[13]  =new JRadioButton();
+		butt[13].setName(Integer.toString(17));
+		butt[13].setBounds(400,30, 55, 20);
+		butt[13].setText("stop");
+		butt[13].setOpaque(false);
+		butt[13].addActionListener(myListener);
+		tlf.myPanel.add(butt[13]);
 
-        controller=new Controller(evToShabat,
+
+
+
+        controller=new Controller(evP_Freeze,
+				                  evToShabat,
                                   evToWeekday,
                                   evP_Toweekday,
                                   evP_ToShabat,
@@ -125,7 +144,65 @@ public class BuildTrafficLight
                                   buildGroup(evAtRed,GROUP3),
                                   buildGroup(evToGreen,GROUP3));
 
-    }
+
+
+
+		Client770 client = new Client770(evTo_freeze_client,evTo_Shabat_client,evTo_weekday_client,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen);
+
+		Thread t=new Thread(){
+			@Override
+			public void run()
+			{
+				while(true){
+					if(evGroup1ToGreen.arrivedEvent()){
+						evGroup1ToGreen.waitEvent();
+                        System.out.println("###evGroup1ToGreen###");
+						evP_butt.sendEvent(1);
+
+					}
+					else if(evGroup2ToGreen.arrivedEvent()){
+						evGroup2ToGreen.resetEvent();
+                        System.out.println("###evGroup2ToGreen##");
+
+                        evP_butt.sendEvent(3);
+
+                    }
+					else if(evGroup3ToGreen.arrivedEvent()){
+						evGroup3ToGreen.waitEvent();
+                        System.out.println("###evGroup3ToGreen###");
+                        evP_butt.sendEvent(0);
+
+                    }
+                    else if(evTo_freeze_client.arrivedEvent()){
+                        evTo_freeze_client.waitEvent();
+                        System.out.println("###evTo_freeze_client###");
+                        butt[13].doClick();
+
+                    }
+                    else if(evTo_Shabat_client.arrivedEvent()){
+                        evTo_Shabat_client.waitEvent();
+                        System.out.println("###evTo_Shabat_client###");
+                        butt[12].doClick();
+
+                    }
+                    else if(evTo_weekday_client.arrivedEvent()){
+                        evTo_weekday_client.waitEvent();
+                        System.out.println("###evTo_weekday_client###");
+                        butt[12].doClick();
+
+                    }
+                    else
+                        yield();
+
+
+				}
+
+			}
+		};
+		t.start();
+
+
+	}
 
 	static Event64[] buildGroup(Event64[] from,int[] hwo){
 	    Event64[] temp=new Event64[hwo.length];

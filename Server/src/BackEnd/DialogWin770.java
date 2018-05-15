@@ -1,4 +1,4 @@
-//File name DialogWin770.java
+package BackEnd;//File name BackEnd.DialogWin770.java
 //Iyar 5770
 //Levian Yehonatan
 import java.awt.BorderLayout;
@@ -21,7 +21,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import sun.awt.WindowClosingListener;
 
 public class DialogWin770 extends JFrame implements ActionListener,WindowListener
 {

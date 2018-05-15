@@ -1,26 +1,22 @@
-//file name: Server770.java
+package BackEnd;//file name: BackEnd.Server770.java
 //Iyar 5770
 //Levian Yehonatan
+import gui.GUI_server;
+
 import java.io.*;
 import java.net.*;
 
-class UseServer70
-{
-    public static void main(String[] arg)
-    {
-        new Server770();
-    }
-}
-
-class Server770 extends Thread 	   //the parallel server
+public class Server770 extends Thread 	   //the parallel server
 {
 
     int DEFAULT_PORT = 770;
     ServerSocket listenSocket;
     Socket clientSockets;
+    GUI_server server;
 
-    public Server770()   // constructor of a TCP server
+    public Server770(GUI_server gui_server)   // constructor of a TCP server
     {
+        server=gui_server;
         try
         {
             listenSocket = new ServerSocket(DEFAULT_PORT);
@@ -42,7 +38,7 @@ class Server770 extends Thread 	   //the parallel server
             while (true)
             {
                 clientSockets = listenSocket.accept();
-                new Dialog770(clientSockets, this);
+                server.addClient(clientSockets);
             }
 
         } catch (IOException e)

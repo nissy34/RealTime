@@ -1,4 +1,4 @@
-//file name: Dialog770.java
+package BackEnd;//file name: BackEnd.Dialog770.java
 //Iyar 5770
 //Levian Yehonatan
 import java.io.BufferedReader;
