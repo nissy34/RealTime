@@ -1,6 +1,7 @@
 import javafx.scene.effect.Light;
 
 import javax.swing.JRadioButton;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class BuildTrafficLight
@@ -14,6 +15,7 @@ public class BuildTrafficLight
 		final int[] GROUP2=new int[]{2,3,4,5,8,11,14,15};
 		final int[] GROUP3=new int[]{0,6,7,9,10,12,13};
 
+		ConcurrentLinkedQueue concurrentLinkedQueue=new ConcurrentLinkedQueue();
 		Event64 evGroup1ToGreen=new Event64(),
 				evGroup2ToGreen=new Event64(),
 				evGroup3ToGreen=new Event64(),
