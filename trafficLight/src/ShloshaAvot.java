@@ -71,7 +71,10 @@ public class ShloshaAvot extends Thread
         this.evAtRed = evAtRed;
         evTimerEnd = new Event64();
         this.key=key;
-        new CarsMaker(panel,this,key);
+
+
+
+
         start();
     }
 

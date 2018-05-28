@@ -1,6 +1,7 @@
 import javafx.scene.effect.Light;
 
 import javax.swing.JRadioButton;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class BuildTrafficLight
@@ -9,7 +10,10 @@ public class BuildTrafficLight
 	public static void main(String[] args) 
 	{
 		Controller controller;
-
+		ConcurrentLinkedQueue[] carsQeque =new ConcurrentLinkedQueue[4];
+		for (int i=0;i<4;++i) {
+			carsQeque[i]=new ConcurrentLinkedQueue();
+		}
 		final int[] GROUP1=new int[]{1,2,4,5,6,7,12,13};
 		final int[] GROUP2=new int[]{2,3,4,5,8,11,14,15};
 		final int[] GROUP3=new int[]{0,6,7,9,10,12,13};
@@ -19,8 +23,8 @@ public class BuildTrafficLight
 				evGroup3ToGreen=new Event64(),
                 evTo_Shabat_client=new Event64(),
                 evTo_weekday_client=new Event64(),
-                evTo_freeze_client=new Event64();
-
+                evTo_freeze_client=new Event64(),
+				evCar_arrived =new Event64();
 
 		Event64[] evToGreen,evToRed,evToShabat,evToWeekday,evAtRed;
 
@@ -66,9 +70,12 @@ public class BuildTrafficLight
 
 
         TrafficLightFrame tlf=new TrafficLightFrame("installation of traffic lights",ramzorim);
-        for (int i=0;i<4;i++)
-		    new ShloshaAvot(ramzorim[i],tlf.myPanel,i+1,evToShabat[i],evToWeekday[i],evToGreen[i],evToRed[i],evAtRed[i]);
 
+        for (int i=1;i<4;i++) {
+			ShloshaAvot shloshaAvot = new ShloshaAvot(ramzorim[i], tlf.myPanel, i + 1, evToShabat[i], evToWeekday[i], evToGreen[i], evToRed[i], evAtRed[i]);
+			if (i==0)
+			new CarsMaker(tlf.myPanel, shloshaAvot, i+1,carsQeque[i],null,null);
+		}
         for (int i=4;i<16;i++)
 		    new ShneyLuchot(ramzorim[i],tlf.myPanel,i,evToShabat[i],evToWeekday[i],evToGreen[i],evToRed[i],evAtRed[i]);
 
@@ -188,20 +195,23 @@ public class BuildTrafficLight
                     else if(evTo_weekday_client.arrivedEvent()){
                         evTo_weekday_client.waitEvent();
                         System.out.println("###evTo_weekday_client###");
-                        butt[12].doClick();
-
-                    }
+                        //butt[12].doClick();
+                        evCar_arrived.sendEvent("0,1000");
+						}
+					else if(evCar_arrived.arrivedEvent()){
+						String data =(evCar_arrived.waitEvent()).toString();
+                    	int ramzor=Integer.parseInt(data.split(",")[0]);
+						int carNum=Integer.parseInt(data.split(",")[1]);
+						carsQeque[ramzor].add(carNum);
+					}
                     else
                         yield();
-
 
 				}
 
 			}
 		};
 		t.start();
-
-
 	}
 
 	static Event64[] buildGroup(Event64[] from,int[] hwo){
