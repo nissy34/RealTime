@@ -17,7 +17,7 @@ public class ShloshaAvot extends Thread
     private int count;
     private int key;
     private boolean stop = true;
-   final int BLINKINGINTERVAL=500;
+    final int BLINKINGINTERVAL=500;
     final int BLINKINGINTERVALYELLOW=1000;
 
     final int INTERVALYELLOWTORED=1000;

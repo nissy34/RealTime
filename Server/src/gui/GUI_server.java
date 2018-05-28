@@ -29,7 +29,6 @@ public class GUI_server
         List<String> list=new ArrayList<>();
         clientNames= FXCollections.observableArrayList(list);
         clientBufferSocketOut =new ArrayList<>();
-
     }
 
     public void g1Pressed(ActionEvent actionEvent)
