@@ -35,7 +35,7 @@ public class DialogWin770 extends JFrame implements ActionListener,WindowListene
     private Style myHeaderStyle, otherHeaderStyle;
     private Dialog770 myDialog;
     public JButton send;
-    private String myName = "Your";
+    private String myName = "Server";
     private String otherName = "Client";
 
     public DialogWin770(String header, Dialog770 myDialog)

@@ -22,13 +22,14 @@ public class CarsMaker extends Thread
 
 	public void run()
 	{
+		int i=0;
 		try {
 			while (true)
 			{
 				sleep(300);
 				if ( !myRamzor.isStop())
 				{
-					new CarMooving(myPanel,myRamzor,key);
+					new CarMoovingWithNum(myPanel,myRamzor,key,i++);
 				}
 
 			}
