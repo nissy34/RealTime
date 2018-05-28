@@ -18,16 +18,18 @@ public class CarMoovingWithNum extends Thread
 	private ShloshaAvot myRamzor;
 	private int key;
 	int x, dx;
+	Event64 evFinish;
 	int y, dy;
 	ImageIcon imageIcon;
 	boolean first2=true;
     private  int num;
-	public CarMoovingWithNum(JPanel myPanel, ShloshaAvot myRamzor,int key,int num)
+	public CarMoovingWithNum(JPanel myPanel, ShloshaAvot myRamzor,int key,int num,Event64 EvFinish)
 	{
 		this.myPanel=myPanel;
 		this.myRamzor=myRamzor;
 		this.key=key;
         this.num=num;
+        this.evFinish=EvFinish;
 		setCarLocationAndMooving();
 		imageIcon = getImageIcon();
 		myLabel= new JLabel(imageIcon);
@@ -94,6 +96,7 @@ public class CarMoovingWithNum extends Thread
 			}
 			myPanel.repaint();
 		}
+		evFinish.sendEvent(key-1+","+num);
 
 	}
 	private boolean finish() 

@@ -72,9 +72,8 @@ public class BuildTrafficLight
 
         TrafficLightFrame tlf=new TrafficLightFrame("installation of traffic lights",ramzorim);
 
-        for (int i=1;i<4;i++) {
+        for (int i=0;i<4;i++) {
 			ShloshaAvot shloshaAvot = new ShloshaAvot(ramzorim[i], tlf.myPanel, i + 1, evToShabat[i], evToWeekday[i], evToGreen[i], evToRed[i], evAtRed[i]);
-			if (i==0)
 			new CarsMaker(tlf.myPanel, shloshaAvot, i+1,carsQeque[i],null,null);
 		}
         for (int i=4;i<16;i++)

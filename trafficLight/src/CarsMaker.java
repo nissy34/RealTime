@@ -35,11 +35,11 @@ public class CarsMaker extends Thread
 			{
 			while(!carQueue.isEmpty()) {
 				if (!myRamzor.isStop()) {
-					new CarMoovingWithNum(myPanel, myRamzor, key,(int)carQueue.poll());
+					new CarMoovingWithNum(myPanel, myRamzor, key,(int)carQueue.poll(),evCar_finish);
 				}
-				yield();
+				sleep(300);
 			}
-
+               yield();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
