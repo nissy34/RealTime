@@ -19,9 +19,9 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
     BufferedReader keyBoard;
     ClientWin770 myOutput;
     String line;
-    Event64 evFreeze,ev_ToShabat,ev_Toweekday,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen;
+    Event64 evFreeze,ev_ToShabat,ev_Toweekday,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen,evCar_arrived,evCar_finish;
 
-    public Client770(Event64 evFreeze, Event64 ev_ToShabat, Event64 ev_Toweekday, Event64 evGroup1ToGreen, Event64 evGroup2ToGreen, Event64 evGroup3ToGreen)
+    public Client770(Event64 evFreeze, Event64 ev_ToShabat, Event64 ev_Toweekday, Event64 evGroup1ToGreen, Event64 evGroup2ToGreen, Event64 evGroup3ToGreen,Event64 evCar_arrived,Event64 evCar_finish)
     {
         this.evFreeze = evFreeze;
         this.ev_ToShabat = ev_ToShabat;
@@ -29,6 +29,8 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
         this.evGroup1ToGreen = evGroup1ToGreen;
         this.evGroup2ToGreen = evGroup2ToGreen;
         this.evGroup3ToGreen = evGroup3ToGreen;
+        this.evCar_arrived = evCar_arrived;
+        this.evCar_finish = evCar_finish;
         start();
     }
 
@@ -63,6 +65,9 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
 
             while (!end)
             {
+                if(evCar_finish.arrivedEvent())
+                    bufferSocketOut.println((evCar_finish.waitEvent()).toString());
+
                 line = bufferSocketIn.readLine(); // reads a line from the server
                 if (line == null)  // connection is closed ?  exit
                 {
@@ -94,6 +99,10 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
                     case "end":
                         end=true;
                         break;
+                    default:
+                        if(isRamzorAndCar(line))
+                            evCar_arrived.sendEvent(line);
+                        break;
                 }
 
             }
@@ -119,9 +128,9 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
         System.out.println("end of client ");
     }
 
-    public static void main(String[] args)
-    {
-        Client770 client = new Client770(new Event64(),new Event64(),new Event64(),new Event64(),new Event64(),new Event64());
+    private boolean isRamzorAndCar(String line) {
 
+        return true;
     }
+
 }
