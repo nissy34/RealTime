@@ -99,4 +99,9 @@ public class GUI_server
 
 
     }
+    public void sendCar()
+    {
+        sendCommand("3,100");
+    }
+
 }

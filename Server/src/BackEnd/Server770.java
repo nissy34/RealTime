@@ -12,11 +12,12 @@ public class Server770 extends Thread 	   //the parallel server
     int DEFAULT_PORT = 770;
     ServerSocket listenSocket;
     Socket clientSockets;
-    GUI_server server;
+    GUI_server gui_server;
+    ControlNetFlow controlNetFlow;
 
     public Server770(GUI_server gui_server)   // constructor of a TCP server
     {
-        server=gui_server;
+        this.gui_server=gui_server;
         try
         {
             listenSocket = new ServerSocket(DEFAULT_PORT);
@@ -38,7 +39,10 @@ public class Server770 extends Thread 	   //the parallel server
             while (true)
             {
                 clientSockets = listenSocket.accept();
-                server.addClient(clientSockets);
+                gui_server.addClient(clientSockets);
+                controlNetFlow.addIntersectionClient(new IntersectionClient(clientSockets));
+
+
             }
 
         } catch (IOException e)

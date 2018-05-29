@@ -62,9 +62,23 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
             myOutput.printMe("Connected to " + clientSocket.getInetAddress() +
                     ":" + clientSocket.getPort());
             boolean end=false;
+            Thread t=new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        if(evCar_finish.arrivedEvent())
+                            bufferSocketOut.println((String)(evCar_finish.waitEvent()));
+                        yield();
+                    }
+                }
+
+            };
+            t.start();
+
 
             while (!end)
             {
+
                 if(evCar_finish.arrivedEvent())
                     bufferSocketOut.println((evCar_finish.waitEvent()).toString());
 

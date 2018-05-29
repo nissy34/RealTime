@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -13,46 +15,58 @@
       <ColumnConstraints />
    </columnConstraints>
    <rowConstraints>
+      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints maxHeight="-Infinity" minHeight="10.0" vgrow="SOMETIMES" />
       <RowConstraints />
       <RowConstraints />
       <RowConstraints />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
    </rowConstraints>
    <children>
-      <ChoiceBox fx:id="choiceBox" prefHeight="0.0" prefWidth="170.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+      <ChoiceBox fx:id="choiceBox" prefHeight="25.0" prefWidth="223.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </ChoiceBox>
-      <Button fx:id="g1" minWidth="79.0" mnemonicParsing="false" onAction="#g1Pressed" text="G1 to green" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Button fx:id="g1" minWidth="79.0" mnemonicParsing="false" onAction="#g1Pressed" text="G1 to green" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="weekday" minWidth="79.0" mnemonicParsing="false" onAction="#weekdayPressed" text="Weekday" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Button fx:id="weekday" minWidth="79.0" mnemonicParsing="false" onAction="#weekdayPressed" text="Weekday" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="g2" mnemonicParsing="false" onAction="#g2Pressed" text="G2 to green" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+      <Button fx:id="g2" mnemonicParsing="false" onAction="#g2Pressed" text="G2 to green" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="shabat" minWidth="79.0" mnemonicParsing="false" onAction="#shabatPressed" text="Shabat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+      <Button fx:id="shabat" minWidth="79.0" mnemonicParsing="false" onAction="#shabatPressed" text="Shabat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="g3" mnemonicParsing="false" onAction="#g3Pressed" text="G3 to green" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+      <Button fx:id="g3" mnemonicParsing="false" onAction="#g3Pressed" text="G3 to green" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="stop" minWidth="79.0" mnemonicParsing="false" onAction="#stopPressed" text="Stop" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+      <Button fx:id="stop" minWidth="79.0" mnemonicParsing="false" onAction="#stopPressed" text="Stop" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </Button>
+      <TextField GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label text="Enter ramzor:" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+      <Label text="Enter car :" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </GridPane.margin>
+      </Label>
+      <TextField GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Button mnemonicParsing="false" text="Send Car" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" onAction="#sendCar" />
    </children>
 </GridPane>
