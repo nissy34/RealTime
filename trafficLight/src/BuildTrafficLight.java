@@ -18,13 +18,15 @@ public class BuildTrafficLight
 		final int[] GROUP2=new int[]{2,3,4,5,8,11,14,15};
 		final int[] GROUP3=new int[]{0,6,7,9,10,12,13};
 
+		ConcurrentLinkedQueue concurrentLinkedQueue=new ConcurrentLinkedQueue();
 		Event64 evGroup1ToGreen=new Event64(),
 				evGroup2ToGreen=new Event64(),
 				evGroup3ToGreen=new Event64(),
                 evTo_Shabat_client=new Event64(),
                 evTo_weekday_client=new Event64(),
                 evTo_freeze_client=new Event64(),
-				evCar_arrived =new Event64();
+				evCar_arrived =new Event64(),
+				evCar_finish =new Event64();
 
 		Event64[] evToGreen,evToRed,evToShabat,evToWeekday,evAtRed;
 
@@ -73,8 +75,7 @@ public class BuildTrafficLight
 
         for (int i=0;i<4;i++) {
 			ShloshaAvot shloshaAvot = new ShloshaAvot(ramzorim[i], tlf.myPanel, i + 1, evToShabat[i], evToWeekday[i], evToGreen[i], evToRed[i], evAtRed[i]);
-			if (i==0)
-			new CarsMaker(tlf.myPanel, shloshaAvot, i+1,carsQeque[i],null,null);
+			new CarsMaker(tlf.myPanel, shloshaAvot, i+1,carsQeque[i],null,evCar_finish);
 		}
         for (int i=4;i<16;i++)
 		    new ShneyLuchot(ramzorim[i],tlf.myPanel,i,evToShabat[i],evToWeekday[i],evToGreen[i],evToRed[i],evAtRed[i]);
@@ -154,7 +155,7 @@ public class BuildTrafficLight
 
 
 
-		Client770 client = new Client770(evTo_freeze_client,evTo_Shabat_client,evTo_weekday_client,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen);
+		Client770 client = new Client770(evTo_freeze_client,evTo_Shabat_client,evTo_weekday_client,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen,evCar_arrived,evCar_finish);
 
 		Thread t=new Thread(){
 			@Override
