@@ -18,6 +18,7 @@ public class Server770 extends Thread 	   //the parallel server
     public Server770(GUI_server gui_server)   // constructor of a TCP server
     {
         this.gui_server=gui_server;
+        this.controlNetFlow=new ControlNetFlow();
         try
         {
             listenSocket = new ServerSocket(DEFAULT_PORT);

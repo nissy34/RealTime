@@ -67,6 +67,6 @@
          </GridPane.margin>
       </Label>
       <TextField GridPane.columnIndex="1" GridPane.rowIndex="6" />
-      <Button mnemonicParsing="false" text="Send Car" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" onAction="#sendCar" />
+      <Button mnemonicParsing="false" onAction="#sendCar" text="Send Car" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
    </children>
 </GridPane>
