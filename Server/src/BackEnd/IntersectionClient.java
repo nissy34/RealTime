@@ -25,7 +25,8 @@ public class IntersectionClient extends Thread {
                     new BufferedWriter(
                             new OutputStreamWriter(
                                     clientSocket.getOutputStream())), true);
-            name="Intersection"+intersectionNum;
+            name="Intersection"+intersectionNum++;
+
 
 
         } catch (IOException e) {
@@ -36,20 +37,36 @@ public class IntersectionClient extends Thread {
             System.err.println("server:Exception when opening sockets: " + e);
             return;
         }
-        start();
+
     }
 
     @Override
     public void run() {
-        super.run();
-        String line="";
-        while (true){
-            try {
-                line = bufferSocketIn.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+
+       Thread t=new Thread() {
+            @Override
+            public void run() {
+                String line="";
+                while (true) {
+                    try {
+                        line = bufferSocketIn.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(line != "" && ev_startNextIntersection != null){
+                        ev_startNextIntersection.sendEvent(line);
+                        line="";
+                    }
+                    yield();
+                }
             }
-            if(ev_startIntersection.arrivedEvent()){
+
+        };
+        t.start();
+        while (true){
+
+            if(ev_startIntersection !=null && ev_startIntersection.arrivedEvent()){
 
                 String data =(ev_startIntersection.waitEvent()).toString();
                 int ramzor=Integer.parseInt(data.split(",")[0]);
@@ -66,11 +83,12 @@ public class IntersectionClient extends Thread {
                         bufferSocketOut.println("3,"+carNum);
                 }
             }
-             if(line != ""){
-                ev_startNextIntersection.sendEvent(line);
-            }
+
             yield();
         }
+
+
+
     }
 
     public BufferedReader getBufferSocketIn() {
