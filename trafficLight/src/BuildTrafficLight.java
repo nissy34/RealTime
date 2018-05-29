@@ -71,7 +71,7 @@ public class BuildTrafficLight
 
         TrafficLightFrame tlf=new TrafficLightFrame("installation of traffic lights",ramzorim);
 
-        for (int i=1;i<4;i++) {
+        for (int i=0;i<4;i++) {
 			ShloshaAvot shloshaAvot = new ShloshaAvot(ramzorim[i], tlf.myPanel, i + 1, evToShabat[i], evToWeekday[i], evToGreen[i], evToRed[i], evAtRed[i]);
 			if (i==0)
 			new CarsMaker(tlf.myPanel, shloshaAvot, i+1,carsQeque[i],null,null);
@@ -195,8 +195,8 @@ public class BuildTrafficLight
                     else if(evTo_weekday_client.arrivedEvent()){
                         evTo_weekday_client.waitEvent();
                         System.out.println("###evTo_weekday_client###");
-                        //butt[12].doClick();
-                        evCar_arrived.sendEvent("0,1000");
+                        butt[12].doClick();
+                        //evCar_arrived.sendEvent("0,1000");
 						}
 					else if(evCar_arrived.arrivedEvent()){
 						String data =(evCar_arrived.waitEvent()).toString();
