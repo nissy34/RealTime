@@ -109,20 +109,40 @@ public class GUI_server
     public void sendCar()
     {
         int ramzor,carnum;
+
         try
         {
-             ramzor=Integer.parseInt(ramzorText.getText());
-             carnum= Integer.parseInt(carnumText.getText());
-            if(!choiceBox.getSelectionModel().isEmpty())
-                sendCommand(ramzor+","+carnum);
+            ramzor=Integer.parseInt(ramzorText.getText())%4;
+
+
         }
         catch (Exception e)
         {
-            if(!choiceBox.getSelectionModel().isEmpty())
-                sendCommand(rand.nextInt(3)+","+rand.nextInt(2000));
+            ramzor=rand.nextInt(3);
+
+
+
         }
 
+        try
+        {
 
+             carnum= Math.abs(Integer.parseInt(carnumText.getText()));
+
+        }
+        catch (Exception e)
+        {
+          
+            carnum=rand.nextInt(2000);
+
+
+        }
+
+        ramzorText.setText(String.valueOf(ramzor));
+        carnumText.setText(String.valueOf(carnum));
+
+        if(!choiceBox.getSelectionModel().isEmpty())
+            sendCommand(ramzor+","+carnum);
 
 
     }
