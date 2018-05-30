@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RealTime.iml" filepath="$PROJECT_DIR$/RealTime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trafficLight.iml" filepath="$PROJECT_DIR$/trafficLight.iml" />
     </modules>
   </component>
 </project>
