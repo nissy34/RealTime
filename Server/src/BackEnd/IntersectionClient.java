@@ -10,13 +10,16 @@ public class IntersectionClient extends Thread {
     static int intersectionNum =0;
     BufferedReader bufferSocketIn;
     PrintWriter bufferSocketOut;
+    Socket clientSocket;
     String name;
     Event64 ev_startNextIntersection,ev_startIntersection;
+    boolean finish=false;
 
 
 
     public IntersectionClient(Socket clientSocket) {
         try {
+            this.clientSocket=clientSocket;
             // Init streams to read/write text in this socket
             bufferSocketIn = new BufferedReader(
                     new InputStreamReader(
@@ -27,7 +30,7 @@ public class IntersectionClient extends Thread {
                                     clientSocket.getOutputStream())), true);
             name="Intersection"+intersectionNum++;
 
-
+          start();
 
         } catch (IOException e) {
             try {
@@ -48,10 +51,18 @@ public class IntersectionClient extends Thread {
             @Override
             public void run() {
                 String line="";
-                while (true) {
+
+                while (!clientSocket.isClosed()) {
                     try {
                         line = bufferSocketIn.readLine();
-                    } catch (IOException e) {
+                } catch (IOException e) {
+                        try
+                        {
+                            clientSocket.close();
+                        } catch (IOException e1)
+                        {
+                            e1.printStackTrace();
+                        }
                         e.printStackTrace();
                     }
                     if(line != "" && ev_startNextIntersection != null){
@@ -60,11 +71,14 @@ public class IntersectionClient extends Thread {
                     }
                     yield();
                 }
+
+
+
             }
 
         };
         t.start();
-        while (true){
+        while (!clientSocket.isClosed()){
 
             if(ev_startIntersection !=null && ev_startIntersection.arrivedEvent()){
 

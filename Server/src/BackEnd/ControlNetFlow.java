@@ -27,9 +27,9 @@ public class ControlNetFlow {
         IntersectionClient newIntersectionClient = intersectionClientsList.get(size);
         oldIntersectionClient.setEv_startNextIntersection(temp);
         newIntersectionClient.setEv_startIntersection(temp);
-       if(!oldIntersectionClient.isAlive())
+       /*if(!oldIntersectionClient.isAlive())
             oldIntersectionClient.start();
         newIntersectionClient.start();
-
+*/
     }
 }

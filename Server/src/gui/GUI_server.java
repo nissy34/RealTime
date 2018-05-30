@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GUI_server
 {
@@ -23,6 +24,7 @@ public class GUI_server
     public Button stop;
    public  ObservableList<String> clientNames;
   public  List<PrintWriter> clientBufferSocketOut;
+    Random rand=new Random();
 
     public GUI_server()
     {
@@ -99,9 +101,11 @@ public class GUI_server
 
 
     }
+
     public void sendCar()
     {
-        sendCommand("3,100");
+        if(!choiceBox.getSelectionModel().isEmpty())
+           sendCommand(rand.nextInt(3)+","+rand.nextInt(2000));
     }
 
 }

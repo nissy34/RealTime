@@ -10,7 +10,7 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
 
 //    String SERVERHOST = "147.161.52.150";
 
-    String SERVERHOST = "192.168.43.216";
+    String SERVERHOST = "";
 
     int DEFAULT_PORT = 770;
     Socket clientSocket = null;
