@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
@@ -26,9 +27,10 @@ public class GUI_server
     public Button stop;
     public TextField carnumText;
     public TextField ramzorText;
+    public CheckBox rand;
     public  ObservableList<String> clientNames;
     public  List<PrintWriter> clientBufferSocketOut;
-    Random rand=new Random();
+    Random random=new Random();
 
     public GUI_server()
     {
@@ -108,41 +110,46 @@ public class GUI_server
 
     public void sendCar()
     {
-        int ramzor,carnum;
+            int ramzor,carnum;
+            if(!rand.isSelected())
+            {
+                try
+                {
 
-        try
-        {
-            ramzor=Integer.parseInt(ramzorText.getText())%4;
-
-
-        }
-        catch (Exception e)
-        {
-            ramzor=rand.nextInt(3);
+                    ramzor = Integer.parseInt(ramzorText.getText()) % 4;
 
 
-
-        }
-
-        try
-        {
-
-             carnum= Math.abs(Integer.parseInt(carnumText.getText()));
-
-        }
-        catch (Exception e)
-        {
-          
-            carnum=rand.nextInt(2000);
+                } catch (Exception e)
+                {
+                    ramzor = random.nextInt(3);
 
 
-        }
+                }
 
-        ramzorText.setText(String.valueOf(ramzor));
-        carnumText.setText(String.valueOf(carnum));
+                try
+                {
 
-        if(!choiceBox.getSelectionModel().isEmpty())
-            sendCommand(ramzor+","+carnum);
+                    carnum = Math.abs(Integer.parseInt(carnumText.getText()));
+
+                } catch (Exception e)
+                {
+
+                    carnum = random.nextInt(2000);
+
+
+                }
+            }
+            else{
+                carnum = random.nextInt(2000);
+                ramzor = random.nextInt(3);
+
+            }
+
+            ramzorText.setText(String.valueOf(ramzor));
+            carnumText.setText(String.valueOf(carnum));
+
+            if(!choiceBox.getSelectionModel().isEmpty())
+                sendCommand(ramzor+","+carnum);
 
 
     }
