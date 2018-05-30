@@ -1,5 +1,6 @@
 package gui;
 
+import com.sun.deploy.util.StringUtils;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import javafx.beans.value.ObservableListValue;
 import javafx.collections.FXCollections;
@@ -7,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 
 import java.io.*;
 import java.net.Socket;
@@ -22,8 +24,10 @@ public class GUI_server
    // List<Socket> clientSockets;
     public ChoiceBox choiceBox;
     public Button stop;
-   public  ObservableList<String> clientNames;
-  public  List<PrintWriter> clientBufferSocketOut;
+    public TextField carnumText;
+    public TextField ramzorText;
+    public  ObservableList<String> clientNames;
+    public  List<PrintWriter> clientBufferSocketOut;
     Random rand=new Random();
 
     public GUI_server()
@@ -104,8 +108,23 @@ public class GUI_server
 
     public void sendCar()
     {
-        if(!choiceBox.getSelectionModel().isEmpty())
-           sendCommand(rand.nextInt(3)+","+rand.nextInt(2000));
+        int ramzor,carnum;
+        try
+        {
+             ramzor=Integer.parseInt(ramzorText.getText());
+             carnum= Integer.parseInt(carnumText.getText());
+            if(!choiceBox.getSelectionModel().isEmpty())
+                sendCommand(ramzor+","+carnum);
+        }
+        catch (Exception e)
+        {
+            if(!choiceBox.getSelectionModel().isEmpty())
+                sendCommand(rand.nextInt(3)+","+rand.nextInt(2000));
+        }
+
+
+
+
     }
 
 }

@@ -85,16 +85,19 @@ public class IntersectionClient extends Thread {
                 String data =(ev_startIntersection.waitEvent()).toString();
                 int ramzor=Integer.parseInt(data.split(",")[0]);
                 int carNum=Integer.parseInt(data.split(",")[1]);
+                System.out.println("ramzor "+ramzor);
+                System.out.println("carnum "+carNum);
                 switch (ramzor){
                     case 3:
-                        bufferSocketOut.println("3,"+carNum);
+                        bufferSocketOut.println("1,"+carNum);
                         break;
                     case 0:
-                    case 1:
+                    case 4:
+
                         bufferSocketOut.println("0,"+carNum);
                         break;
                     case 2:
-                        bufferSocketOut.println("3,"+carNum);
+                        bufferSocketOut.println("0,"+carNum);
                 }
             }
 
