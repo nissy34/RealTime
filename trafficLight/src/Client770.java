@@ -10,7 +10,7 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
 
 //    String SERVERHOST = "147.161.52.150";
 
-    String SERVERHOST = "";
+    String SERVERHOST;
     int DEFAULT_PORT = 770;
     Socket clientSocket = null;
     BufferedReader bufferSocketIn;
@@ -22,6 +22,7 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
 
     public Client770(Event64 evFreeze, Event64 ev_ToShabat, Event64 ev_Toweekday, Event64 evGroup1ToGreen, Event64 evGroup2ToGreen, Event64 evGroup3ToGreen,Event64 evCar_arrived,Event64 evCar_finish)
     {
+        SERVERHOST = "";
         this.evFreeze = evFreeze;
         this.ev_ToShabat = ev_ToShabat;
         this.ev_Toweekday = ev_Toweekday;
@@ -33,6 +34,19 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
         start();
     }
 
+    public Client770(String ip,Event64 evFreeze, Event64 ev_ToShabat, Event64 ev_Toweekday, Event64 evGroup1ToGreen, Event64 evGroup2ToGreen, Event64 evGroup3ToGreen,Event64 evCar_arrived,Event64 evCar_finish)
+    {
+        SERVERHOST=ip;
+        this.evFreeze = evFreeze;
+        this.ev_ToShabat = ev_ToShabat;
+        this.ev_Toweekday = ev_Toweekday;
+        this.evGroup1ToGreen = evGroup1ToGreen;
+        this.evGroup2ToGreen = evGroup2ToGreen;
+        this.evGroup3ToGreen = evGroup3ToGreen;
+        this.evCar_arrived = evCar_arrived;
+        this.evCar_finish = evCar_finish;
+        start();
+    }
     public void run()
     {
         try
