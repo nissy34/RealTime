@@ -10,7 +10,7 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
 
 //    String SERVERHOST = "147.161.52.150";
 
-    String SERVERHOST = "192.168.43.237";
+    String SERVERHOST = "";
     int DEFAULT_PORT = 770;
     Socket clientSocket = null;
     BufferedReader bufferSocketIn;
@@ -61,7 +61,7 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
             myOutput.printMe("Connected to " + clientSocket.getInetAddress() +
                     ":" + clientSocket.getPort());
             boolean end=false;
-            Thread t=new Thread() {
+          /*  Thread t=new Thread() {
                 @Override
                 public void run() {
                     while (true) {
@@ -72,7 +72,7 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
                 }
 
             };
-                   t.start();
+                   t.start();*/
 
 
             while (!end)
@@ -81,41 +81,45 @@ class Client770 extends Thread		/// !! change to server IP name or address !! //
                 if(evCar_finish.arrivedEvent())
                     bufferSocketOut.println((evCar_finish.waitEvent()).toString());
 
-                line = bufferSocketIn.readLine(); // reads a line from the server
-                if (line == null)  // connection is closed ?  exit
+                if(bufferSocketIn.ready())
                 {
-                    myOutput.printMe("Connection closed by the Server.");
-                    break;
-                }
+                    line = bufferSocketIn.readLine(); // reads a line from the server
+                    if (line == null)  // connection is closed ?  exit
+                    {
+                        myOutput.printMe("Connection closed by the Server.");
+                        break;
+                    }
 
-                myOutput.printOther(line); // shows it on the screen
+                    myOutput.printOther(line); // shows it on the screen
 
-                switch (line){
-                    case "group1":
-                        evGroup1ToGreen.sendEvent();
-                        break;
-                    case "group2":
-                        evGroup2ToGreen.sendEvent();
-                        break;
-                    case "group3":
-                        evGroup3ToGreen.sendEvent();
-                        break;
-                    case "freeze":
-                        evFreeze.sendEvent();
-                        break;
-                    case "shabat":
-                        ev_ToShabat.sendEvent();
-                        break;
-                    case "weekday":
-                        ev_Toweekday.sendEvent();
-                        break;
-                    case "end":
-                        end=true;
-                        break;
-                    default:
-                        if(isRamzorAndCar(line))
-                            evCar_arrived.sendEvent(line);
-                        break;
+                    switch (line)
+                    {
+                        case "group1":
+                            evGroup1ToGreen.sendEvent();
+                            break;
+                        case "group2":
+                            evGroup2ToGreen.sendEvent();
+                            break;
+                        case "group3":
+                            evGroup3ToGreen.sendEvent();
+                            break;
+                        case "freeze":
+                            evFreeze.sendEvent();
+                            break;
+                        case "shabat":
+                            ev_ToShabat.sendEvent();
+                            break;
+                        case "weekday":
+                            ev_Toweekday.sendEvent();
+                            break;
+                        case "end":
+                            end = true;
+                            break;
+                        default:
+                            if (isRamzorAndCar(line))
+                                evCar_arrived.sendEvent(line);
+                            break;
+                    }
                 }
 
             }

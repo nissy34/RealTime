@@ -46,39 +46,24 @@ public class IntersectionClient extends Thread {
     @Override
     public void run() {
 
-
-       Thread t=new Thread() {
-            @Override
-            public void run() {
-                String line="";
-
-                while (!clientSocket.isClosed()) {
-                    try {
-                        line = bufferSocketIn.readLine();
-                } catch (IOException e) {
-                        try
-                        {
-                            clientSocket.close();
-                        } catch (IOException e1)
-                        {
-                            e1.printStackTrace();
-                        }
-                        e.printStackTrace();
-                    }
-                    if(line != "" && ev_startNextIntersection != null){
-                        ev_startNextIntersection.sendEvent(line);
-                        line="";
-                    }
-                    yield();
-                }
-
-
-
-            }
-
-        };
-        t.start();
         while (!clientSocket.isClosed()){
+
+            try
+            {
+                if(bufferSocketIn.ready()){
+
+                    String line=bufferSocketIn.readLine();
+
+                    if(line != "" && ev_startNextIntersection != null)
+                    {
+                        ev_startNextIntersection.sendEvent(line);
+                    }
+
+                }
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
 
             if(ev_startIntersection !=null && ev_startIntersection.arrivedEvent()){
 
@@ -87,6 +72,7 @@ public class IntersectionClient extends Thread {
                 int carNum=Integer.parseInt(data.split(",")[1]);
                 System.out.println("ramzor "+ramzor);
                 System.out.println("carnum "+carNum);
+
                 switch (ramzor){
                     case 3:
                         bufferSocketOut.println("1,"+carNum);

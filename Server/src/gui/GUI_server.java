@@ -121,7 +121,7 @@ public class GUI_server
 
                 } catch (Exception e)
                 {
-                    ramzor = random.nextInt(3);
+                    ramzor = random.nextInt(4);
 
 
                 }
@@ -141,7 +141,7 @@ public class GUI_server
             }
             else{
                 carnum = random.nextInt(2000);
-                ramzor = random.nextInt(3);
+                ramzor = random.nextInt(4);
 
             }
 

@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ControlNetFlow {
 
-    public List<IntersectionClient> intersectionClientsList=new ArrayList<>();
+    private List<IntersectionClient> intersectionClientsList=new ArrayList<>();
 
 
     public void addIntersectionClient(IntersectionClient intersectionClient) {
