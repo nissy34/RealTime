@@ -155,7 +155,11 @@ public class BuildTrafficLight
 
 
 
-		Client770 client = new Client770(evTo_freeze_client,evTo_Shabat_client,evTo_weekday_client,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen,evCar_arrived,evCar_finish);
+        if (args.length>=1)
+            new Client770(args[0],evTo_freeze_client,evTo_Shabat_client,evTo_weekday_client,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen,evCar_arrived,evCar_finish);
+
+        else
+		      new Client770(evTo_freeze_client,evTo_Shabat_client,evTo_weekday_client,evGroup1ToGreen,evGroup2ToGreen,evGroup3ToGreen,evCar_arrived,evCar_finish);
 
 		Thread t=new Thread(){
 			@Override
